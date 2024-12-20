@@ -18,4 +18,6 @@ public interface ToDosService {
     Optional<ToDo> deleteToDo(Long todoId);
 
     ToDosResponse updateExistingToDo(Long toDoId, ToDosUpdateRequest toDosRequest);
+
+    List<ToDo> getAllTodos();
 }

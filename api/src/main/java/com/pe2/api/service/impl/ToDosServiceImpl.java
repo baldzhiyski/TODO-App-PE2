@@ -152,6 +152,14 @@ public class ToDosServiceImpl implements ToDosService {
 
         toDo.setFinished(toDosRequest.getFinished());
 
+
+        // Set the finish date
+        Date finihsedDate = null;
+        if (toDosRequest.getFinishedDate() != null && !toDosRequest.getFinishedDate().isBlank()) {
+             finihsedDate = new Date(Long.parseLong(toDosRequest.getFinishedDate()));
+        }
+        toDo.setFinishedDate(finihsedDate);
+
         if (toDosRequest.getAssigneeIdList() != null && !toDosRequest.getAssigneeIdList().isEmpty()) {
             // Detach all current assignees
             toDo.getAssigneeList().forEach(assignee -> assignee.setToDo(null));
@@ -160,6 +168,11 @@ public class ToDosServiceImpl implements ToDosService {
         }
 
         return getToDosResponse(toDo, assignees);
+    }
+
+    @Override
+    public List<ToDo> getAllTodos() {
+        return this.toDosRepository.findAll();
     }
 
     private ToDosResponse getToDosResponse(ToDo toDo, List<Assignee> assignees) {

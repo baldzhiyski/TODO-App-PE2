@@ -106,6 +106,42 @@ class ApiClient {
     public async delete<T>(endpoint: string, headers?: Record<string, string>): Promise<T> {
         return this.fetchApi<T>(endpoint, { method: 'DELETE', headers });
     }
+    public async getCsv(endpoint: string, headers?: Record<string, string>): Promise<Blob> {
+        const url = `${this.baseUrl}/${endpoint}`;
+        const config: RequestInit = {
+            method: 'GET',
+            headers: {
+                ...headers,
+                'Content-Type': 'application/csv', // Ensure we request CSV
+            },
+        };
+
+        const response = await fetch(url, config);
+
+        if (!response.ok) {
+            let errorData;
+            try {
+                errorData = await response.json();
+            } catch (error) {
+                errorData = { message: 'An error occurred while parsing the error response.' };
+            }
+
+            const errorMessage = errorData.message || 'Failed to fetch data from the API';
+            const fieldErrors = errorData.errors || {};
+            const generalErrors = errorData.generalErrors || [];
+
+            console.error('API Error:', { errorMessage, fieldErrors, generalErrors });
+
+            // Create a custom error object and include additional properties
+            const error = new CustomError(errorMessage, fieldErrors, generalErrors);
+            error.stack;
+
+            throw error;
+        }
+
+        // Return the response as a Blob (CSV file)
+        return response.blob();
+    }
 
 }
 

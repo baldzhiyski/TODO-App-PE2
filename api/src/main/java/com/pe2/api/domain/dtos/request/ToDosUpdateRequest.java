@@ -16,6 +16,8 @@ public class ToDosUpdateRequest {
 
     private String title;
 
+    private String finishedDate;
+
     private String description;
 
     private ArrayList<Long> assigneeIdList;

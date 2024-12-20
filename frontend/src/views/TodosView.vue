@@ -4,6 +4,17 @@
       <i class="fas fa-tasks"></i> ToDos Management
     </h1>
 
+    <!-- Download Button -->
+    <button
+        @click="downloadCSV"
+        class="btn btn-primary btn-lg d-flex align-items-center justify-content-center mb-3"
+        :disabled="isDownloading"
+    >
+      <i class="fas fa-download me-2"></i> Download CSV
+      <span v-if="isDownloading" class="spinner-border spinner-border-sm ms-2" role="status" aria-hidden="true"></span>
+    </button>
+
+
     <!-- Filters and Sorting -->
     <div class="row mb-4">
       <div class="col-md-4">
@@ -345,7 +356,7 @@
 import apiClient from "../lib/apiClient";
 import ModalComponent from "../components/ModalComponent.vue";
 import {createToast} from "../ts/toasts.ts";
-import {faInfo, faXmark} from "@fortawesome/free-solid-svg-icons";
+import {faCheck, faInfo, faXmark} from "@fortawesome/free-solid-svg-icons";
 
 export default {
   components: {ModalComponent},
@@ -364,6 +375,7 @@ export default {
       isCreateModalVisible: false,
       isEditModalVisible: false,
       isAssignModalVisible:false,
+      isDownloading: false,
       newToDo: {
         title: "",
         description: "",
@@ -425,12 +437,14 @@ export default {
     },
     async markAsFinished(id) {
       try {
+        const currentTimestamp = Date.now();
         await apiClient.put(`todos/${id}`, {
           title: "",
           dueDate: "",
           description: "",
           finished : true,
-          assigneeIdList: []
+          assigneeIdList: [],
+          finishedDate: currentTimestamp // Add the finishedDate as a timestamp
         });
         this.fetchToDos(); // Refresh the list
       } catch (error) {
@@ -444,7 +458,8 @@ export default {
           dueDate: "",
           description: "",
           finished : false,
-          assigneeIdList: []
+          assigneeIdList: [],
+          finishedDate: null
         });
         this.fetchToDos(); // Refresh the list
       } catch (error) {
@@ -570,6 +585,57 @@ export default {
       this.editToDo.id = todo.id
       this.isAssignModalVisible=true;
     },
+    async downloadCSV() {
+      this.isDownloading = true; // Start download process
+
+      try {
+        // Use the get method from apiClient to fetch the CSV file
+        const response = await apiClient.getCsv('csv-downloads/todos', {
+          responseType: 'blob', // This ensures the response is treated as a binary Blob (CSV)
+          headers: {
+            'Content-Type': 'application/csv',
+          },
+        });
+
+        // Assuming response is an object containing a 'todos' array or a similar structure
+        // Ensure to handle the todos array properly
+
+        // Check if the todos array is empty
+        if (this.toDos.length === 0) {
+          createToast({
+            title: "Download failed",  // Toast title
+            message: "No ToDos found. Download cannot be completed.",  // Error message
+            icon: faXmark,
+            type: "error",  // Toast type (error)
+            timeout: 5,  // Duration for the toast in milliseconds (5 seconds)
+          });
+          this.isDownloading = false; // Reset the download flag
+          return; // Exit the function as there's no need to proceed with the download
+        }
+
+        // Convert the response to a Blob and create a download link
+        const url = window.URL.createObjectURL(response);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', 'todos.csv'); // You can name the file as per your requirement
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+      } catch (error) {
+        console.error(error);
+
+        // Show a toast message if there was an error during download
+        createToast({
+          title: "Download failed",  // Toast title
+          message: "There was an error while downloading the file.",  // Error message
+          icon: faXmark,
+          type: "error",  // Toast type (error)
+          timeout: 5,  // Duration for the toast in milliseconds (5 seconds)
+        });
+      } finally {
+        this.isDownloading = false; // End download process
+      }
+    },
     async saveEdits() {
       try {
         console.log(this.editToDo)
@@ -653,5 +719,25 @@ export default {
 </script>
 
 <style scoped>
-/* Add custom styling here */
+/* Customize button styling */
+.btn-primary {
+  background-color: #007bff;
+  border-color: #007bff;
+  padding: 10px 20px;
+  font-size: 16px;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+  border-color: #004085;
+}
+
+.spinner-border-sm {
+  border-width: 2px;
+}
+
+/* Add some spacing and rounded corners */
+button {
+  border-radius: 50px;
+}
 </style>
