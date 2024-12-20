@@ -32,7 +32,7 @@
     <div class="row">
       <!-- Pending ToDos -->
       <div class="col-md-6">
-        <h3>
+        <h3 class="mb-3">
           <i class="fas fa-hourglass-half text-warning"></i> Pending ToDos
         </h3>
         <ul class="list-group">
@@ -51,6 +51,8 @@
                 <br/>
                 <i class="fas fa-calendar-alt"></i> Due:
                 {{ formatDate(todo.dueDate) }}
+                <br/>
+                <i class="fas fa-tags"></i> Category: {{ todo.category }}
               </p>
               <p class="mb-0">
                 <i class="fas fa-users"></i> Assignees:
@@ -91,6 +93,10 @@
               </button>
             </div>
           </li>
+          <li v-if="filteredAndSortedToDos(false).length === 0" class="list-group-item text-center text-muted bg-warning text-dark">
+            <i class="fas fa-info-circle"></i> No pending ToDos .
+          </li>
+
         </ul>
       </div>
 
@@ -125,6 +131,8 @@
                 <br/>
                 <i class="fas fa-calendar-alt"></i> Due:
                 {{ formatDate(todo.dueDate) }}
+                <br/>
+                <i class="fas fa-tags"></i> Category: {{ todo.category }}
               </p>
               <p class="mb-0">
                 <i class="fas fa-users"></i> Assignees:
@@ -144,6 +152,12 @@
               </button>
             </div>
           </li>
+
+          <li v-if="filteredAndSortedToDos(true).length === 0" class="list-group-item text-center  bg-success text-white">
+            <i class="fas fa-info-circle"></i> No finished ToDos .
+          </li>
+
+
         </ul>
       </div>
     </div>
@@ -233,7 +247,7 @@
           <input type="text" v-model="newToDo.title" class="form-control" id="title" required/>
         </div>
         <div class="mb-3">
-          <label for="description" class="form-label">Name</label>
+          <label for="description" class="form-label">Description</label>
           <input type="text" v-model="newToDo.description" class="form-control" id="description" required/>
         </div>
         <div class="mb-3">
@@ -278,9 +292,13 @@
               v-model="selectedAssignee"
               class="form-select"
           >
-            <option disabled value="">Select an assignee</option>
+            <!-- Check if assignees is empty -->
+            <option v-if="assignees.length === 0" disabled>
+              No assignees available
+            </option>
+            <!-- Loop through assignees -->
             <option v-for="ass in assignees" :key="ass.id" :value="ass">
-              {{ ass.prename + " " + ass.name  }}
+              {{ ass.prename + " " + ass.name }}
             </option>
           </select>
           <button

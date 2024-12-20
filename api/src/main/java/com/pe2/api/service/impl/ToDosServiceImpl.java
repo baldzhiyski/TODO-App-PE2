@@ -1,5 +1,6 @@
 package com.pe2.api.service.impl;
 
+import com.pe2.api.domain.TodoModel;
 import com.pe2.api.domain.dtos.request.ToDosUpdateRequest;
 import com.pe2.api.domain.dtos.response.AssigneeResponse;
 import com.pe2.api.domain.dtos.request.ToDosRequest;
@@ -49,6 +50,7 @@ public class ToDosServiceImpl implements ToDosService {
                     mapped.setCreatedDate(toDo.getCreatedDate() != null ? toDo.getCreatedDate().getTime() : null);
                     mapped.setDueDate(toDo.getDueDate() != null ? toDo.getDueDate().getTime() : null);
                     mapped.setFinishedDate(toDo.getFinishedDate() != null ? toDo.getFinishedDate().getTime() : null);
+                    mapped.setCategory(toDo.getCategory());
 
                     // Map assignees manually
                     List<AssigneeResponse> mappedAssignees = toDo.getAssigneeList().stream()
@@ -81,6 +83,7 @@ public class ToDosServiceImpl implements ToDosService {
         mapped.setDescription(toDosRequest.getDescription());
         mapped.setTitle(toDosRequest.getTitle());
 
+
         // Convert the dueDate (timestamp) to Date
         if (toDosRequest.getDueDate() != null) {
             try {
@@ -97,7 +100,20 @@ public class ToDosServiceImpl implements ToDosService {
         if (toDosRequest.getAssigneeIdList() != null && !toDosRequest.getAssigneeIdList().isEmpty()) {
             validateAssigneesExist(mapped, assignees, toDosRequest.getAssigneeIdList());
         }
+
+        // Logic for the category definition
+        setCategory(toDosRequest.getTitle(), mapped);
+
         return getToDosResponse(mapped, assignees);
+    }
+
+    private static void setCategory(String title, ToDo mapped) {
+        TodoModel todoModel = new TodoModel(title);
+        String category = todoModel.predictClass(title);
+
+        mapped.setCategory(category);
+
+        todoModel.unloadModel();
     }
 
     @Override
@@ -115,6 +131,8 @@ public class ToDosServiceImpl implements ToDosService {
         List<Assignee> assignees = new ArrayList<>();
         if (!toDosRequest.getTitle().isBlank()) {
             toDo.setTitle(toDosRequest.getTitle());
+            // Update the category for new title present
+            setCategory(toDosRequest.getTitle(), toDo);
         }
 
         if (!toDosRequest.getDescription().isBlank()) {
@@ -156,6 +174,7 @@ public class ToDosServiceImpl implements ToDosService {
         mappedResponse.setFinished(toDo.isFinished());
         mappedResponse.setCreatedDate(toDo.getCreatedDate() != null ? toDo.getCreatedDate().getTime() : null);
         mappedResponse.setFinishedDate(toDo.getFinishedDate() != null ? toDo.getFinishedDate().getTime() : null);
+        mappedResponse.setCategory(toDo.getCategory());
 
         List<AssigneeResponse> mappedAssignees = toDo.getAssigneeList().stream()
                 .map(assignee -> {

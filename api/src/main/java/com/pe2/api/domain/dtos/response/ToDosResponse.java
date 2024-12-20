@@ -23,4 +23,6 @@ public class ToDosResponse {
     private Long dueDate;
     private Long finishedDate;
 
+    private String category;
+
 }

@@ -17,4 +17,6 @@ public class ToDoDetails {
     private Long createdDate;
     private Long dueDate;
     private Long finishedDate;
+    private String category;
+
 }

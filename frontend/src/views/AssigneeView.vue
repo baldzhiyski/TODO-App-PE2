@@ -48,10 +48,12 @@
       </div>
     </div>
 
-    <!-- Error Message -->
-    <div v-else class="alert alert-danger text-center">
-      <i class="fas fa-database"></i> Failed to load assignees. Please check your database connection and try again.
+    <!-- No Assignees Message -->
+    <div v-else class="alert alert-info d-flex align-items-center justify-content-center" role="alert">
+      <i class="fas fa-info-circle me-2"></i>
+      <span>No assignees have been added yet. Please add one to get started.</span>
     </div>
+
 
 
 
@@ -241,7 +243,7 @@ export default {
         await apiClient.delete(`assignees/${assignee.id}`);
         createToast({
           title: "Successfully deleted Assignee",  // Toast title
-          message: "Assignee -  " + assignee.prename + assignee.name + " - was successfully deleted !",  // The concatenated error messages,
+          message: "Assignee -  " + assignee.prename + ' ' + assignee.name + " - was successfully deleted !",  // The concatenated error messages,
           icon: faCheck,
           type: "success",  // Toast type (error)
           timeout: 5,  // Duration for the toast in seconds

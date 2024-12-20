@@ -33,4 +33,7 @@ public class ToDo extends BaseEntity {
 
     @Column
     private Date finishedDate;
+
+    @Column
+    private String category;
 }

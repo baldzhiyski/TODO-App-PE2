@@ -19,23 +19,25 @@ import java.util.Date;
 
 @Configuration
 public class InitConfig {
-    @Bean
-    public DataSourceInitializer dataSourceInitializer(DataSource dataSource,
-                                                       AssigneeRepository assigneeRepository,
-                                                       ToDosRepository todoRepository,
-                                                       ResourceLoader resourceLoader) {
-        DataSourceInitializer initializer = new DataSourceInitializer();
-        initializer.setDataSource(dataSource);
 
-        if (assigneeRepository.count() == 0 && todoRepository.count() == 0) {
-            ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
-            populator.addScript(resourceLoader.getResource("classpath:data.sql"));
-            initializer.setDatabasePopulator(populator);
-        }
 
-        return initializer;
-    }
-
+//    @Bean
+//    public DataSourceInitializer dataSourceInitializer(DataSource dataSource,
+//                                                       AssigneeRepository assigneeRepository,
+//                                                       ToDosRepository todoRepository,
+//                                                       ResourceLoader resourceLoader) {
+//        DataSourceInitializer initializer = new DataSourceInitializer();
+//        initializer.setDataSource(dataSource);
+//
+//        if (assigneeRepository.count() == 0 && todoRepository.count() == 0) {
+//            ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+//            populator.addScript(resourceLoader.getResource("classpath:data.sql"));
+//            initializer.setDatabasePopulator(populator);
+//        }
+//
+//        return initializer;
+//    }
+//
 
     @Bean
     public ModelMapper modelMapper() {
