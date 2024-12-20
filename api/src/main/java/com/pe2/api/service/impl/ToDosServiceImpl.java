@@ -88,7 +88,13 @@ public class ToDosServiceImpl implements ToDosService {
         if (toDosRequest.getDueDate() != null) {
             try {
                 long timestamp = Long.parseLong(toDosRequest.getDueDate());  // Now it's a long, no need to parse
-                mapped.setDueDate(new Date(timestamp));  // Set the dueDate as a Date object
+
+                Date dueDate = new Date(timestamp);
+                if (dueDate.before(new Date())) {
+                    throw new InvalidDueDateException("The due date cannot be in the past.");
+                }
+
+                mapped.setDueDate(dueDate);  // Set the dueDate as a Date object
             } catch (NumberFormatException e) {
                 throw new InvalidDueDateException("Invalid date format : " + toDosRequest.getDueDate());
             }
