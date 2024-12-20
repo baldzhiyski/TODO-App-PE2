@@ -47,7 +47,7 @@ public class ExportCsvController {
                     // Concatenate prename and name for each assignee
                     todo.getAssigneeList().stream()
                             .map(assignee -> assignee.getPrename() + " " + assignee.getName())  // Combine prename and name
-                            .collect(Collectors.joining(" + ")),  // Collect the formatted assignees
+                            .collect(Collectors.joining("+")),  // Collect the formatted assignees
                     // Format the dates if they are not null using SimpleDateFormat
                     formatDate(todo.getCreatedDate(), sdf),
                     formatDate(todo.getDueDate(), sdf),

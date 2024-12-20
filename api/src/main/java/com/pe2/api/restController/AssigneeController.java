@@ -28,7 +28,7 @@ public class AssigneeController {
     }
 
 
-    @GetMapping
+    @GetMapping()
     public List<AssigneeResponse> getAssignees() {
         // Fetch the list of assignees
 
