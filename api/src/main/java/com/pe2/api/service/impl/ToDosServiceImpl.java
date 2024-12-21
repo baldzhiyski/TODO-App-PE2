@@ -158,16 +158,11 @@ public class ToDosServiceImpl implements ToDosService {
 
         if(toDosRequest.getFinished()!=null) {
             toDo.setFinished(toDosRequest.getFinished());
+            toDo.setFinishedDate(new Date());
+        }else{
+            toDo.setFinished(false);
+            toDo.setFinishedDate(null);
         }
-
-
-        // Set the finish date
-        Date finihsedDate = null;
-        if (toDosRequest.getFinishedDate() != null && !toDosRequest.getFinishedDate().isBlank()) {
-            finihsedDate = new Date();
-        }
-        toDo.setFinishedDate(finihsedDate);
-
 
         // Detach all current assignees
         toDo.getAssigneeList().forEach(assignee -> assignee.setToDo(null));
