@@ -439,6 +439,7 @@ export default {
           description: "",
           finished : false,
           assigneeIdList: [],
+          finishedDate:null
         });
         this.fetchToDos(); // Refresh the list
       } catch (error) {

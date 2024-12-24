@@ -156,10 +156,11 @@ public class ToDosServiceImpl implements ToDosService {
             toDo.setDueDate(dueDate);
         }
 
-        if(toDosRequest.getFinished()!=null) {
-            toDo.setFinished(toDosRequest.getFinished());
-            toDo.setFinishedDate(new Date());
-        }else{
+        if (toDosRequest.getFinished() != null) {
+            boolean isFinished = toDosRequest.getFinished();
+            toDo.setFinished(isFinished);
+            toDo.setFinishedDate(isFinished ? new Date() : null);
+        } else {
             toDo.setFinished(false);
             toDo.setFinishedDate(null);
         }
