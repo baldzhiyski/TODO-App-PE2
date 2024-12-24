@@ -44,17 +44,6 @@
             <a href="#" class="nav-link" @click="logout"><i class="fas fa-sign-out-alt"></i> Log Out</a>
           </li>
 
-          <!-- More dropdown menu -->
-          <li class="dropdown">
-            <a href="#" class="nav-link dropdown-toggle" @click.prevent="toggleDropdown">
-              <i class="fas fa-ellipsis-h"></i> More
-            </a>
-            <ul :class="['dropdown-menu', { 'show': isDropdownOpen }]">
-              <li><a href="#" class="dropdown-item"><i class="fas fa-cog"></i> Settings</a></li>
-              <li><a href="#" class="dropdown-item"><i class="fas fa-star"></i> Features</a></li>
-              <li><a href="#" class="dropdown-item"><i class="fas fa-info-circle"></i> About</a></li>
-            </ul>
-          </li>
         </ul>
       </div>
     </div>

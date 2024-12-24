@@ -1,38 +1,47 @@
 <template>
   <div class="container mt-5">
-    <h1 class="text-center mb-4">
-      <i class="fas fa-tasks"></i> ToDos Management
-    </h1>
+    <!-- Header -->
+    <div class="text-center mb-4">
+      <h1 class="display-4">
+        <i class="fas fa-tasks text-primary"></i> ToDos Management
+      </h1>
+      <p class="lead text-muted">Manage your tasks efficiently with enhanced features and styling.</p>
+    </div>
 
     <!-- Download Button -->
-    <button
-        @click="downloadCSV"
-        class="btn btn-primary btn-lg d-flex align-items-center justify-content-center mb-3"
-        :disabled="isDownloading"
-    >
-      <i class="fas fa-download me-2"></i> Download CSV
-      <span v-if="isDownloading" class="spinner-border spinner-border-sm ms-2" role="status" aria-hidden="true"></span>
-    </button>
-
+    <div class="text-center mb-4">
+      <button
+          @click="downloadCSV"
+          class="btn btn-primary btn-lg"
+          :disabled="isDownloading"
+      >
+        <i class="fas fa-download me-2"></i> Download CSV
+        <span v-if="isDownloading" class="spinner-border spinner-border-sm ms-2" role="status" aria-hidden="true"></span>
+      </button>
+    </div>
 
     <!-- Filters and Sorting -->
-    <div class="row mb-4">
+    <div class="row g-3 mb-4 align-items-end">
       <div class="col-md-4">
+        <label for="filterTitle" class="form-label">Filter by Title</label>
         <input
             v-model="filters.title"
             type="text"
             class="form-control"
-            placeholder="Filter by title"
+            id="filterTitle"
+            placeholder="Search tasks..."
         />
       </div>
       <div class="col-md-4">
-        <select v-model="filters.sortBy" class="form-select">
-          <option value="title">Sort by Title</option>
-          <option value="dueDate">Sort by Due Date</option>
+        <label for="sortBy" class="form-label">Sort By</label>
+        <select v-model="filters.sortBy" id="sortBy" class="form-select">
+          <option value="title">Title</option>
+          <option value="dueDate">Due Date</option>
         </select>
       </div>
       <div class="col-md-4">
-        <select v-model="filters.sortOrder" class="form-select">
+        <label for="sortOrder" class="form-label">Sort Order</label>
+        <select v-model="filters.sortOrder" id="sortOrder" class="form-select">
           <option value="asc">Ascending</option>
           <option value="desc">Descending</option>
         </select>
@@ -40,146 +49,117 @@
     </div>
 
     <!-- ToDo Lists -->
-    <div class="row">
+    <div class="row g-5">
       <!-- Pending ToDos -->
-      <div class="col-md-6">
-        <h3 class="mb-3">
-          <i class="fas fa-hourglass-half text-warning"></i> Pending ToDos
-        </h3>
-        <ul class="list-group">
-          <li
-              v-for="todo in filteredAndSortedToDos(false)"
-              :key="todo.id"
-              class="list-group-item d-flex justify-content-between align-items-center"
-          >
-            <div>
-              <h5>
-                <i class="fas fa-clipboard-list text-primary"></i> {{ todo.title }}
-              </h5>
-              <p class="mb-1">
-                <i class="fas fa-calendar-plus"></i> Created:
-                {{ formatDate(todo.createdDate) }}
-                <br/>
-                <i class="fas fa-calendar-alt"></i> Due:
-                {{ formatDate(todo.dueDate) }}
-                <br/>
-                <i class="fas fa-tags"></i> Category: {{ todo.category }}
-              </p>
-              <p class="mb-0">
-                <i class="fas fa-users"></i> Assignees:
-                <span v-if="todo.assigneeList && todo.assigneeList.length">
-                  {{ todo.assigneeList.map(a => a.prename + " " + a.name).join(", ") }}
-                </span>
-                <span v-else>None</span>
-              </p>
-            </div>
-            <div>
-              <button
-                  class="btn btn-outline-success btn-sm me-2"
-                  @click="markAsFinished(todo.id)"
-                  title="Mark as Finished"
-              >
-                <i class="fas fa-check"></i>
-              </button>
-              <button
-                  class="btn btn-outline-danger btn-sm me-2"
-                  @click="deleteToDo(todo.id)"
-                  title="Delete ToDo"
-              >
-                <i class="fas fa-trash-alt"></i>
-              </button>
-              <button
-                  class="btn btn-outline-primary btn-sm"
-                  @click="openAssignModal(todo)"
-                  title="Assign ToDo"
-              >
-                <i class="fas fa-user-plus"></i>
-              </button>
-              <button
-                  class="btn btn-outline-info btn-sm me-2"
-                  @click="openEditModal(todo)"
-                  title="Edit ToDo"
-              >
-                <i class="fas fa-edit"></i> Edit
-              </button>
-            </div>
-          </li>
-          <li v-if="filteredAndSortedToDos(false).length === 0" class="list-group-item text-center text-muted bg-warning text-dark">
-            <i class="fas fa-info-circle"></i> No pending ToDos .
-          </li>
+      <div class="col-lg-6">
+        <div class="card border-warning shadow">
+          <div class="card-header bg-warning text-white">
+            <h3>
+              <i class="fas fa-hourglass-half me-2"></i> Pending ToDos
+            </h3>
+          </div>
+          <ul class="list-group list-group-flush">
+            <li
+                v-for="todo in filteredAndSortedToDos(false)"
+                :key="todo.id"
+                class="list-group-item d-flex justify-content-between align-items-start"
+            >
+              <div class="flex-grow-1">
+                <h5 class="mb-1">
+                  <i class="fas fa-clipboard-list text-primary me-2"></i> {{ todo.title }}
+                </h5>
+                <p class="text-muted mb-1 small">
+                  <i class="fas fa-calendar-plus me-1"></i> Created: {{ formatDate(todo.createdDate) }}<br />
+                  <i class="fas fa-calendar-alt me-1"></i> Due: {{ formatDate(todo.dueDate) }}<br />
+                  <i class="fas fa-tags me-1"></i> Category: {{ todo.category }}
+                </p>
+                <p class="mb-0 small">
+                  <i class="fas fa-users me-1"></i> Assignees:
+                  <span v-if="todo.assigneeList && todo.assigneeList.length">
+                    {{ todo.assigneeList.map(a => a.prename + " " + a.name).join(", ") }}
+                  </span>
+                  <span v-else>None</span>
+                </p>
+              </div>
+              <div class="btn-group" role="group">
+                <!-- Mark as Finished -->
+                <button class="btn btn-outline-success btn-sm" @click="markAsFinished(todo.id)" title="Mark as Finished">
+                  <i class="fas fa-check"></i>
+                </button>
 
-        </ul>
+                <!-- Delete Task -->
+                <button class="btn btn-outline-danger btn-sm" @click="deleteToDo(todo.id)" title="Delete Task">
+                  <i class="fas fa-trash-alt"></i>
+                </button>
+
+                <!-- Assign User -->
+                <button class="btn btn-outline-info btn-sm" @click="openAssignModal(todo)" title="Assign User">
+                  <i class="fas fa-user-plus"></i>
+                </button>
+
+                <!-- Edit Task -->
+                <button class="btn btn-outline-dark btn-sm" @click="openEditModal(todo)" title="Edit Task">
+                  <i class="fas fa-edit"></i>
+                </button>
+              </div>
+
+            </li>
+            <li v-if="filteredAndSortedToDos(false).length === 0" class="list-group-item text-center text-muted">
+              <i class="fas fa-info-circle"></i> No pending ToDos.
+            </li>
+          </ul>
+        </div>
       </div>
 
       <!-- Finished ToDos -->
-      <div class="col-md-6">
-        <h3>
-          <i class="fas fa-check-circle text-success"></i> Finished ToDos
-          <button
-              class="btn btn-link"
-              @click="toggleFinishedVisibility"
-          >
-            <i
-                class="fas"
-                :class="showFinished ? 'fa-eye-slash' : 'fa-eye'"
-                title="Toggle Finished Visibility"
-            ></i>
-          </button>
-        </h3>
-        <ul v-if="showFinished" class="list-group">
-          <li
-              v-for="todo in filteredAndSortedToDos(true)"
-              :key="todo.id"
-              class="list-group-item d-flex justify-content-between align-items-center"
-          >
-            <div>
-              <h5>
-                <i class="fas fa-check text-success"></i> {{ todo.title }}
-              </h5>
-              <p class="mb-1">
-                <i class="fas fa-calendar-check"></i> Completed:
-                {{ formatDate(todo.finishedDate) }}
-                <br/>
-                <i class="fas fa-calendar-alt"></i> Due:
-                {{ formatDate(todo.dueDate) }}
-                <br/>
-                <i class="fas fa-tags"></i> Category: {{ todo.category }}
-              </p>
-              <p class="mb-0">
-                <i class="fas fa-users"></i> Assignees:
-                <span v-if="todo.assigneeResponseList && todo.assigneeResponseList.length">
-                  {{ todo.assigneeResponseList.map(a => a.prename + " " + a.name).join(", ") }}
-                </span>
-                <span v-else>None</span>
-              </p>
-            </div>
-            <div>
-              <button
-                  class="btn btn-outline-warning btn-sm me-2"
-                  @click="revertToDoStatus(todo.id)"
-                  title="Revert ToDo Status"
-              >
-                <i class="fas fa-undo"></i> Revert
+      <div class="col-lg-6">
+        <div class="card border-success shadow">
+          <div class="card-header bg-success text-white d-flex align-items-center justify-content-between">
+            <h3>
+              <i class="fas fa-check-circle me-2"></i> Finished ToDos
+            </h3>
+            <button class="btn btn-sm btn-light" @click="toggleFinishedVisibility">
+              <i class="fas" :class="showFinished ? 'fa-eye-slash' : 'fa-eye'"></i>
+            </button>
+          </div>
+          <ul v-if="showFinished" class="list-group list-group-flush">
+            <li
+                v-for="todo in filteredAndSortedToDos(true)"
+                :key="todo.id"
+                class="list-group-item d-flex justify-content-between align-items-start"
+            >
+              <div class="flex-grow-1">
+                <h5 class="mb-1">
+                  <i class="fas fa-check text-success me-2"></i> {{ todo.title }}
+                </h5>
+                <p class="text-muted mb-1 small">
+                  <i class="fas fa-calendar-check me-1"></i> Completed: {{ formatDate(todo.finishedDate) }}<br />
+                  <i class="fas fa-calendar-alt me-1"></i> Due: {{ formatDate(todo.dueDate) }}<br />
+                  <i class="fas fa-tags me-1"></i> Category: {{ todo.category }}
+                </p>
+                <p class="mb-0 small">
+                  <i class="fas fa-users me-1"></i> Assignees:
+                  <span v-if="todo.assigneeResponseList && todo.assigneeResponseList.length">
+                    {{ todo.assigneeResponseList.map(a => a.prename + " " + a.name).join(", ") }}
+                  </span>
+                  <span v-else>None</span>
+                </p>
+              </div>
+              <button class="btn btn-warning btn-sm" @click="revertToDoStatus(todo.id)">
+                <i class="fas fa-undo"></i>
               </button>
-            </div>
-          </li>
-
-          <li v-if="filteredAndSortedToDos(true).length === 0" class="list-group-item text-center  bg-success text-white">
-            <i class="fas fa-info-circle"></i> No finished ToDos .
-          </li>
-
-
-        </ul>
+            </li>
+            <li v-if="filteredAndSortedToDos(true).length === 0" class="list-group-item text-center text-muted">
+              <i class="fas fa-info-circle"></i> No finished ToDos.
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
 
     <!-- Create ToDo Button -->
-    <div class="text-center mt-4">
-      <button
-          class="btn btn-primary"
-          @click="openCreateModal"
-          title="Create New ToDo"
-      >
+    <div class="text-center mt-5">
+      <button class="btn btn-primary btn-lg" @click="openCreateModal">
         <i class="fas fa-plus"></i> Create New ToDo
       </button>
     </div>
