@@ -635,7 +635,7 @@ export default {
           title: "Successfully  edited  todo !",  // Toast title
           message: successMessage,  // The concatenated error messages,
           icon: faInfo,
-          type: "success",  // Toast type (error)
+          type: "success",
           timeout: 5,  // Duration for the toast in seconds
         });
         this.fetchToDos(); // Refresh the list
@@ -657,7 +657,7 @@ export default {
       try {
         await apiClient.delete(`todos/${id}`);
         createToast({
-          title: "Successfully operation !",  // Toast title
+          title: "Successful deletion !",  // Toast title
           message: "Successfully deleted todo with id  " + id + "!",  // The concatenated error messages,
           icon: faInfo,
           type: "success",  // Toast type (error)
